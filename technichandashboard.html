@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCycle - Technician Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --primary-light: #E3F2FD;
+            --primary-dark: #1976D2;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            --danger-color: #F44336;
+            --text-dark: #263238;
+            --text-light: #78909C;
+            --bg-light: #F5F7FA;
+            --sidebar-width: 250px;
+            --header-height: 60px;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+        
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            width: var(--sidebar-width);
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .search-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            max-width: 400px;
+            background-color: var(--bg-light);
+            border-radius: 50px;
+            padding: 8px 15px;
+            margin: 0 20px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 5px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        
+        .search-bar i {
+            color: var(--text-light);
+            margin-right: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            z-index: 90;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .menu-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary-color);
+        }
+        
+        .menu-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .menu-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-light);
+            padding: 15px 20px 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .kpi-card {
+            display: flex;
+            align-items: center;
+        }
+        
+        .kpi-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .kpi-assigned .kpi-icon {
+            background-color: var(--primary-color);
+        }
+        
+        .kpi-open .kpi-icon {
+            background-color: var(--warning-color);
+        }
+        
+        .kpi-completed .kpi-icon {
+            background-color: var(--success-color);
+        }
+        
+        .kpi-urgent .kpi-icon {
+            background-color: var(--danger-color);
+        }
+        
+        .kpi-details {
+            flex: 1;
+        }
+        
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .task-card {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .task-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .task-machine {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .task-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .task-badge.critical {
+            background-color: #FFEBEE;
+            color: var(--danger-color);
+        }
+        
+        .task-badge.high {
+            background-color: #FFF3E0;
+            color: #FF9800;
+        }
+        
+        .task-badge.medium {
+            background-color: #E8F5E9;
+            color: var(--success-color);
+        }
+        
+        .task-badge.low {
+            background-color: #E1F5FE;
+            color: var(--primary-color);
+        }
+        
+        .task-details {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .progress-critical .progress-bar {
+            background-color: var(--danger-color);
+        }
+        
+        .progress-high .progress-bar {
+            background-color: #FF9800;
+        }
+        
+        .progress-medium .progress-bar {
+            background-color: var(--success-color);
+        }
+        
+        .progress-low .progress-bar {
+            background-color: var(--primary-color);
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+        
+        .task-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-light);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--bg-light);
+        }
+        
+        /* Machine List Table */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+        
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .status-active {
+            background-color: var(--success-color);
+        }
+        
+        .status-maintenance {
+            background-color: var(--warning-color);
+        }
+        
+        .status-offline {
+            background-color: var(--danger-color);
+        }
+        
+        .parts-inventory {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .inventory-card {
+            text-align: center;
+        }
+        
+        .inventory-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .inventory-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .inventory-stock {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .inventory-status {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .status-in-stock {
+            background-color: #E8F5E9;
+            color: var(--success-color);
+        }
+        
+        .status-low-stock {
+            background-color: #FFF3E0;
+            color: #FF9800;
+        }
+        
+        .status-out-of-stock {
+            background-color: #FFEBEE;
+            color: var(--danger-color);
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 1024px) {
+            .task-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .main-content.pushed {
+                margin-left: var(--sidebar-width);
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .kpi-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                display: none;
+            }
+            
+            .header-actions {
+                margin-left: auto;
+            }
+            
+            .parts-inventory {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        /* Dashboard additional elements */
+        .recently-accessed {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .recently-accessed::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .recently-accessed::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .recently-accessed::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+        
+        .recently-accessed::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+        
+        .recent-item {
+            flex: 0 0 200px;
+            padding: 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .recent-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .recent-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .recent-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .recent-type {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .quick-action-btn {
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-action-btn:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .chart-container {
+            height: 250px;
+            margin-top: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="mobile-menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <div class="logo">
+            <i class="fas fa-recycle"></i>
+            <span>SafeCycle</span>
+        </div>
+        
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search machines, tasks...">
+        </div>
+        
+        <div class="header-actions">
+            <div class="notification-bell">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">5</span>
+            </div>
+            
+            <div class="user-profile">
+                <div class="avatar">JD</div>
+                <span>John Doe</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-title">Maintenance</div>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-tools"></i>
+                <span>My Assigned Machines</span>
+            </a>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-tasks"></i>
+                <span>Maintenance Tasks</span>
+            </a>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Update Task Status</span>
+            </a>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-broom"></i>
+                <span>Cleaning Logs</span>
+            </a>
+            
+            <div class="menu-title">Inventory</div>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-boxes"></i>
+                <span>Spare Parts Inventory</span>
+            </a>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-key"></i>
+                <span>Access Validation</span>
+            </a>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">Technician Dashboard</h1>
+            <div>
+                <span>March 23, 2025</span>
+            </div>
+        </div>
+        
+        <div class="kpi-cards">
+            <div class="card kpi-card kpi-assigned">
+                <div class="kpi-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div class="kpi-details">
+                    <div class="kpi-value">12</div>
+                    <div class="kpi-label">Assigned Machines</div>
+                </div>
+            </div>
+            
+            <div class="card kpi-card kpi-open">
+                <div class="kpi-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="kpi-details">
+                    <div class="kpi-value">8</div>
+                    <div class="kpi-label">Open Maintenance Tasks</div>
+                </div>
+            </div>
+            
+            <div class="card kpi-card kpi-completed">
+                <div class="kpi-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="kpi-details">
+                    <div class="kpi-value">5</div>
+                    <div class="kpi-label">Completed Today</div>
+                </div>
+            </div>
+            
+            <div class="card kpi-card kpi-urgent">
+                <div class="kpi-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="kpi-details">
+                    <div class="kpi-value">3</div>
+                    <div class="kpi-label">Urgent Issues</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Recently Accessed</h2>
+                <a href="#" style="color: var(--primary-color); text-decoration: none; font-size: 0.9rem;">View All</a>
+            </div>
+            
+            <div class="recently-accessed">
+                <div class="recent-item">
+                    <div class="recent-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="recent-name">Recycler-A12</div>
+                    <div class="recent-type">Sorting Machine</div>
+                </div>
+                
+                <div class="recent-item">
+                    <div class="recent-icon">
+                        <i class="fas fa-trash-restore"></i>
+                    </div>
+                    <div class="recent-name">Compactor-B07</div>
+                    <div class="recent-type">Compacting Unit</div>
+                </div>
+                
+                <div class="recent-item">
+                    <div class="recent-icon">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <div class="recent-name">Filter-C15</div>
+                    <div class="recent-type">Air Filtration</div>
+                </div>
+                
+                <div class="recent-item">
+                    <div class="recent-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="recent-name">Crusher-D03</div>
+                    <div class="recent-type">Processing Unit</div>
+                </div>
+                
+                <div class="recent-item">
+                    <div class="recent-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <div class="recent-name">Washer-E09</div>
+                    <div class="recent-type">Cleaning Unit</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Quick Actions</h2>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>New Maintenance Task</span>
+                </button>
+                
+                <button class="quick-action-btn">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Log Completed Work</span>
+                </button>
+                
+                <button class="quick-action-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Request Parts</span>
+                </button>
+                
+                <button class="quick-action-btn">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Report Issue</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Priority Maintenance Tasks</h2>
+                <a href="#" style="color: var(--primary-color); text-decoration: none; font-size: 0.9rem;">View All Tasks</a>
+            </div>
+            
+            <div class="task-grid">
+                <div class="card task-card">
+                    <div class="task-card-header">
+                        <div>
+                            <div class="task-title">Replace Filter System</div>
+                            <div class="task-machine">Recycler-A12</div>
+                        </div>
+                        <span class="task-badge critical">Critical</span>
+                    </div>
+                    
+                    <div class="task-details">
+                        Filter efficiency has dropped below 65%. Replace main HEPA filter and clean surrounding ducts.
+                    </div>
+                    
+                    <div class="task-meta">
+                        <span>Assigned: Mar 22, 2025</span>
+                        <span>Due: Mar 24, 2025</span>
+                    </div>
+                    
+                    <div class="progress-container progress-critical">
+                        <div class="progress-bar" style="width: 25%"></div>
+                    </div>
+                    
+                    <div class="progress-info">
+                        <span>Progress</span>
+                        <span>25%</span>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <button class="btn btn-primary">Update Progress</button>
+                        <button class="btn btn-outline">Details</button>
+                    </div>
+                </div>
+                
+                <div class="card task-card">
+                    <div class="task-card-header">
+                        <div>
+                            <div class="task-title">Hydraulic System Maintenance</div>
+                            <div class="task-machine">Compactor-B07</div>
+                        </div>
+                        <span class="task-badge high">High</span>
+                    </div>
+                    
+                    <div class="task-details">
+                        Scheduled hydraulic fluid replacement and pressure test for compaction system.
+                    </div>
+                    
+                    <div class="task-meta">
+                        <span>Assigned: Mar 21, 2025</span>
+                        <span>Due: Mar 25, 2025</span>
+                    </div>
+                    
+                    <div class="progress-container progress-high">
+                        <div class="progress-bar" style="width: 60%"></div>
+                    </div>
+                    
+                    <div class="progress-info">
+                        <span>Progress</span>
+                        <span>60%</span>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <button class="btn btn-primary">Update Progress</button>
+                        <button class="btn btn-outline">Details</button>
+                    </div>
+                </div>
+                
+                <div class="card task-card">
+                    <div class="task-card-header">
+                        <div>
+                            <div class="task-title">Conveyor Belt Adjustment</div>
+                            <div class="task-machine">Sorter-C15</div>
+                        </div>
+                        <span class="task-badge medium">Medium</span>
+                    </div>
+                    
+                    <div class="task-details">
+                        Recalibrate sorting sensors and adjust conveyor belt tension to optimize material flow.
+                    </div>
+                    
+                    <div class="task-meta">
+                        <span>Assigned: Mar 20, 2025</span>
+                        <span>Due: Mar 27, 2025</span>
+                    </div>
+                    
+                    <div class="progress-container progress-medium">
+                        <div class="progress-bar" style="width: 75%"></div>
+                    </div>

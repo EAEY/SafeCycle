@@ -1,0 +1,40 @@
+Remaining pages
+
+Admin:
+
+maintenance
+workers / technicians
+validation reports
+reports & analytics
+system settings
+
+add machine
+create task
+add user
+generate report
+validate system
+--------------------------------------------------
+Worker:
+
+my tasks
+maintenance requests
+my requests status
+machine details
+cleaning logs
+*remove notification*
+--------------------------------------------------
+technician:
+my assigned machines
+maintenance tasks
+update task status
+access validation
+new maintenance task
+log completed work
+request parts
+report issue
+--------------------------------------------------
+
+
+mutual:
+spare parts inventory
+cleaning logs

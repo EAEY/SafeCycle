@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a9be8;
+            --primary-light: #e6f1fa;
+            --primary-dark: #3886d1;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --idle-color: #6c757d;
+            --text-color: #333;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+            --bg-color: #f8f9fa;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .breadcrumb li:not(:last-child)::after {
+            content: ">";
+            margin: 0 8px;
+        }
+
+        .breadcrumb a {
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .header-right .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Search and Filter Section */
+        .search-filter-section {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr auto;
+            gap: 15px;
+        }
+
+        .search-filter-section .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 155, 232, 0.25);
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .btn-reset {
+            background-color: var(--white);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--bg-color);
+        }
+
+        .btn-search {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-search:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Table Section */
+        .table-container {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--primary-light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:hover {
+            background-color: var(--primary-light);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+            display: inline-block;
+        }
+
+        .status-operational {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-maintenance {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        .status-idle {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--idle-color);
+            border: 1px solid var(--idle-color);
+        }
+
+        .status-outofservice {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .cleaning-status-clean {
+            color: var(--success-color);
+        }
+
+        .cleaning-status-due {
+            color: var(--warning-color);
+        }
+
+        .cleaning-status-overdue {
+            color: var(--danger-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-view {
+            color: var(--primary-color);
+        }
+
+        .btn-edit {
+            color: var(--warning-color);
+        }
+
+        .btn-delete {
+            color: var(--danger-color);
+        }
+
+        .btn-action:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--white);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .page-info {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .page-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-page {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--white);
+            color: var(--text-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-page:hover, .btn-page.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-page.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Export Section */
+        .export-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .btn-export {
+            background-color: var(--white);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-export:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            width: 90%;
+            max-width: 700px;
+            margin: 50px auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .modal-grid .form-group:last-child {
+            grid-column: span 2;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 16px;
+        }
+
+        .modal-body textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .btn-modal-cancel {
+            background-color: var(--white);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-modal-save {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* QR Code Modal */
+        .qr-code-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .qr-code-container img {
+            max-width: 200px;
+            margin-bottom: 15px;
+        }
+
+        .machine-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .machine-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .machine-info p {
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .print-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .search-filter-section {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+            }
+
+            .filter-actions {
+                grid-column: span 2;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+
+            .header-right .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-filter-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                grid-column: auto;
+            }
+
+            .export-section {
+                flex-direction: column;
+            }
+
+            .btn-export {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-grid .form-group:last-child {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-left">
+                <h1>Machine Management</h1>
+                <ul class="breadcrumb">
+                    <li><a href="./admindashboard.html">Home</a></li>
+                    <li><a href="./admindashboard.html">Dashboard</a></li>
+                    <li>Machine Management</li>
+                </ul>
+            </div>
+            <div class="header-right">
+                <button id="addMachineBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add New Machine
+                </button>
+            </div>
+        </header>
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <button class="btn-export" id="exportCSV">
+                <i class="fas fa-file-csv"></i> Export CSV
+            </button>
+            <button class="btn-export" id="generateReport">
+                <i class="fas fa-file-pdf"></i> Generate Report
+            </button>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter-section">
+            <div class="form-group">
+                <label for="searchName">Machine Name</label>
+                <input type="text" id="searchName" placeholder="Search by name...">
+            </div>
+            <div class="form-group">
+                <label for="searchSerial">Serial Number</label>
+                <input type="text" id="searchSerial" placeholder="Search by serial...">
+            </div>
+            <div class="form-group">
+                <label for="filterStatus">Status</label>
+                <select id="filterStatus">
+                    <option value="">All Statuses</option>
+                    <option value="Operational">Operational</option>
+                    <option value="Under Maintenance">Under Maintenance</option>
+                    <option value="Idle">Idle</option>
+                    <option value="Out of Service">Out of Service</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filterLocation">Location</label>
+                <select id="filterLocation">
+                    <option value="">All Locations</option>
+                    <option value="Factory Floor 1">Factory Floor 1</option>
+                    <option value="Factory Floor 2">Factory Floor 2</option>
+                    <option value="Storage">Storage</option>
+                    <option value="Assembly Line A">Assembly Line A</option>
+                    <option value="Assembly Line B">Assembly Line B</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button class="btn-reset" id="resetFilters">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+                <button class="btn-search" id="applyFilters">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table id="machinesTable">
+                    <thead>
+                        <tr>
+                            <th>Machine ID</th>
+                            <th>Machine Name</th>
+                            <th>Serial Number</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Last Maintenance</th>
+                            <th>Cleaning Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be populated via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <div class="page-info">
+                    Showing <span id="startItem">1</span> to <span id="endItem">10</span> of <span id="totalItems">23</span> entries
+                </div>
+                <div class="page-buttons">
+                    <button class="btn-page disabled" id="prevPage">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn-page active">1</button>
+                    <button class="btn-page">2</button>
+                    <button class="btn-page">3</button>
+                    <button class="btn-page" id="nextPage">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit Machine -->
+    <div class="modal" id="machineModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Machine</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="machineForm">
+                    <input type="hidden" id="machineId" value="">
+                    <div class="modal-grid">
+                        <div class="form-group">
+                            <label for="machineName">Machine Name*</label>
+                            <input type="text" id="machineName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="serialNumber">Serial Number*</label>
+                            <input type="text" id="serialNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location*</label>
+                            <select id="location" required>
+                                <option value="">Select Location</option>
+                                <option value="Factory Floor 1">Factory Floor 1</option>
+                                <option value="Factory Floor 2">Factory Floor 2</option>
+                                <option value="Storage">Storage</option>
+                                <option value="Assembly Line A">Assembly Line A</option>
+                                <option value="Assembly Line B">Assembly Line B</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status*</label>
+                            <select id="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Operational">Operational</option>
+                                <option value="Under Maintenance">Under Maintenance</option>
+                                <option value="Idle">Idle</option>
+                                <option value="Out of Service">Out of Service</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastMaintenance">Last Maintenance Date</label>
+                            <input type="date" id="lastMaintenance">
+                        </div>
+                        <div class="form-group">
+                            <label for="nextMaintenance">Next Maintenance Date</label>
+                            <input type="date" id="nextMaintenance">
+                        </div>
+                        <div class="form-group">
+                            <label for="cleaningStatus">Cleaning Status</label>
+                            <select id="cleaningStatus">
+                                <option value="Clean">Clean</option>
+                                <option value="Due for Cleaning">Due for Cleaning</option>
+                                <option value="Cleaning Overdue">Cleaning Overdue</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchaseDate">Purchase Date</label>
+                            <input type="date" id="purchaseDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" placeholder="Additional information..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-modal-cancel" id="cancelModal">Cancel</button>
+                        <button type="submit" class="btn-modal-save">Save Machine</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for QR Code -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Machine QR Code</h2>
+                <button class="modal-close" id="closeQrModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code-container">
+                    <img src="/api/placeholder/200/200" alt="QR Code" id="qrCodeImage">
+                    <div class="machine-info">
+                        <h3 id="qrMachineName">Machine Name</h3>
+                        <p id="qrMachineId">ID: MACH-001</p>
+                        <p id="qrSerialNumber">S/N: SN12345678</p>
+                    </div>
+                    <div class="print-buttons">
+                        <button class="btn-export" id="printQrCode">
+                            <i class="fas fa-print"></i> Print QR Code
+                        </button>
+                        <button class="btn-export" id="downloadQrCode">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample data
+            const machineData = [
+                {
+                    id: "MACH-001",
+                    name: "CNC Milling Machine",
+                    serialNumber: "CN7845921",
+                    location: "Factory Floor 1",
+                    status: "Operational",
+                    lastMaintenance: "2024-03-15",
+                    nextMaintenance: "2024-06-15",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2022-06-10",
+                    notes: "High precision milling machine for metal parts."
+                },
+                {
+                    id: "MACH-002",
+                    name: "Industrial Drill Press",
+                    serialNumber: "DP9275610",
+                    location: "Factory Floor 1",
+                    status: "Under Maintenance",
+                    lastMaintenance: "2024-02-28",
+                    nextMaintenance: "2024-03-28",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2021-11-25",
+                    notes: "Scheduled maintenance due to motor issues."
+                },
+                {
+                    id: "MACH-003",
+                    name: "Conveyor Belt System",
+                    serialNumber: "CV4538721",
+                    location: "Assembly Line A",
+                    status: "Operational",
+                    lastMaintenance: "2024-03-01",
+                    nextMaintenance: "2024-06-01",
+                    cleaningStatus: "Due for Cleaning",
+                    purchaseDate: "2022-04-15",
+                    notes: "Main assembly line conveyor. Clean every month."
+                },
+                {
+                    id: "MACH-004",
+                    name: "Hydraulic Press",
+                    serialNumber: "HP6273849",
+                    location: "Factory Floor 2",
+                    status: "Idle",
+                    lastMaintenance: "2024-01-20",
+                    nextMaintenance: "2024-04-20",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2023-01-05",
+                    notes: "Currently not in use due to project completion."
+                },
+                {
+                    id: "MACH-005",
+                    name: "Laser Cutter",
+                    serialNumber: "LC9263847",
+                    location: "Factory Floor 2",
+                    status: "Operational",
+                    lastMaintenance: "2024-03-10",
+                    nextMaintenance: "2024-06-10",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2022-08-15",
+                    notes: "High-power laser cutter for precision work."
+                },
+                {
+                    id: "MACH-006",
+                    name: "Robotic Arm",
+                    serialNumber: "RA5273940",
+                    location: "Assembly Line B",
+                    status: "Out of Service",
+                    lastMaintenance: "2023-12-05",
+                    nextMaintenance: "2024-03-05",
+                    cleaningStatus: "Cleaning Overdue",
+                    purchaseDate: "2021-07-20",
+                    notes: "Waiting for replacement parts from manufacturer."
+                },
+                {
+                    id: "MACH-007",
+                    name: "Injection Molding Machine",
+                    serialNumber: "IM8273645",
+                    location: "Factory Floor 1",
+                    status: "Operational",
+                    lastMaintenance: "2024-02-25",
+                    nextMaintenance: "2024-05-25",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2022-09-30",
+                    notes: "Used for plastic component production."
+                },
+                {
+                    id: "MACH-008",
+                    name: "3D Printer",
+                    serialNumber: "3DP7263548",
+                    location: "Storage",
+                    status: "Idle",
+                    lastMaintenance: "2024-01-15",
+                    nextMaintenance: "2024-04-15",
+                    cleaningStatus: "Due for Cleaning",
+                    purchaseDate: "2023-03-10",
+                    notes: "Currently in storage, used for prototyping."
+                },
+                {
+                    id: "MACH-009",
+                    name: "Welding Robot",
+                    serialNumber: "WR9263710",
+                    location: "Assembly Line A",
+                    status: "Operational",
+                    lastMaintenance: "2024-03-05",
+                    nextMaintenance: "2024-06-05",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2022-11-12",
+                    notes: "Automated welding system for metal frames."
+                },
+                {
+                    id: "MACH-010",
+                    name: "Packaging Machine",
+                    serialNumber: "PM4527391",
+                    location: "Factory Floor 2",
+                    status: "Under Maintenance",
+                    lastMaintenance: "2024-03-18",
+                    nextMaintenance: "2024-04-18",
+                    cleaningStatus: "Clean",
+                    purchaseDate: "2023-02-28",
+                    notes: "Undergoing routine maintenance and calibration."
+                }
+            ];
+
+            // Clone data for filtered version
+            let filteredMachines = [...machineData];
+            let currentPage = 1;
+            const itemsPerPage = 10;
+            
+            // Initialize table
+            populateTable();
+            updatePagination();
+
+            // Add event listeners
+            document.getElementById('addMachineBtn').addEventListener('click', openAddMachineModal);
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelModal').addEventListener('click', closeModal);
+            document.getElementById('closeQrModal').addEventListener('click', () => document.getElementById('qrModal').style.display = 'none');
+            document.getElementById('machineForm').addEventListener('submit', saveMachine);
+            document.getElementById('resetFilters').addEventListener('click', resetFilters);
+            document.getElementById('applyFilters').addEventListener('click', applyFilters);
+            document.getElementById('prevPage').addEventListener('click', goToPrev)
