@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Assigned Machines | SafeCycle</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      /* Sidebar Styles */
+:root {
+    --primary-color: #4da6ff;
+    --primary-dark: #0066cc;
+    --primary-light: #e6f2ff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --white: #ffffff;
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 70px;
+    --topbar-height: 60px;
+    --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --transition-speed: 0.3s;
+}
+
+/* Layout Structure */
+.layout-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--white);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width var(--transition-speed);
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+}
+
+.sidebar-brand {
+    height: var(--topbar-height);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.sidebar-brand h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-brand-icon {
+    font-size: 1.8rem;
+    margin-right: 15px;
+}
+
+.sidebar-menu {
+    padding: 15px 0;
+}
+
+.sidebar-heading {
+    color: var(--secondary-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 15px 20px 5px;
+}
+
+.sidebar-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+    position: relative;
+}
+
+.sidebar-item i {
+    min-width: 30px;
+    font-size: 1.1rem;
+}
+
+.sidebar-item-text {
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity var(--transition-speed);
+}
+
+.collapsed .sidebar-item-text {
+    opacity: 0;
+    width: 0;
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.sidebar-item.active {
+    border-left: 4px solid var(--primary-color);
+}
+
+.sidebar-item .badge {
+    position: absolute;
+    right: 20px;
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 10px;
+}
+
+.sidebar-toggle {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: var(--primary-light);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.sidebar-toggle:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--transition-speed);
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+/* Responsive Styles for Sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 1001;
+    }
+
+    .sidebar.mobile-active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}
+        :root {
+            --primary-color: #4da6ff;
+            --light-grey: #f8f9fa;
+            --dark-grey: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .page-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .nav-tabs .nav-link {
+            color: var(--dark-grey);
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .table-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        .table th {
+            font-weight: 500;
+            color: var(--dark-grey);
+            border-top: none;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .badge-active {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            padding: 0.4rem 0.7rem;
+        }
+        .badge-inactive {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+            padding: 0.4rem 0.7rem;
+        }
+        .badge-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+            padding: 0.4rem 0.7rem;
+        }
+        .action-icon {
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #3d96e8;
+            border-color: #3d96e8;
+        }
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .close {
+            color: white;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .pagination .page-link {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+  <div class="layout-wrapper">
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+          <i class="fas fa-recycle sidebar-brand-icon"></i>
+          <h1 class="sidebar-brand-text">SafeCycle</h1>
+      </div>
+      <div class="sidebar-menu">
+          <div class="sidebar-heading">Main</div>
+          <a href="./technichandashboard.html" class="sidebar-item Active">
+              <i class="fas fa-tachometer-alt"></i>
+              <span class="sidebar-item-text">Dashboard</span>
+          </a>
+          <div class="sidebar-heading">Maintenance</div>
+  
+          <a href="./MyAssignedMachinesTechnicianDashboard.html" class="sidebar-item">
+              <i class="fas fa-cogs"></i>
+              <span class="sidebar-item-text" >My Assigned Machines</span>
+          </a>
+          
+          <a href="./UpdateTasksTechnicianDashBoard.html" class="sidebar-item">
+              <i class="fas fa-list-check"></i>
+              <span class="sidebar-item-text">Update Tasks</span>
+          </a>
+          <div class="sidebar-heading">System</div>
+  
+          <a href="./index.html" class="sidebar-item">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span class="sidebar-item-text">Log Out</span>
+          </a>
+          <div class="sidebar-toggle" id="sidebar-toggle">
+              <i class="fas fa-chevron-left"></i>
+          </div>
+  </aside>            <div class="main-content">
+        <!-- Your page content here -->
+    <!-- Header Section -->
+    <header class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="h4 mb-1">My Assigned Machines</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb small mb-0">
+                            <li class="breadcrumb-item"><a href="./technichandashboard.html">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Assigned Machines</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 text-end"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Filters Panel -->
+        <div class="filters-panel mb-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" id="searchMachines" placeholder="Search machines...">
+            </div>
+        </div>
+
+        <!-- Machine Listing Table -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="machineTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Machine Name</th>
+                            <th scope="col">Serial Number</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Last Maintenance</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Update Machine Status</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateStatusForm">
+                        <div class="mb-3">
+                            <label for="newStatus" class="form-label">New Status</label>
+                            <select class="form-select" id="newStatus" required>
+                                <option value="">Select Status</option>
+                                <option value="Operational">Operational</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Needs Cleaning">Needs Cleaning</option>
+                                <option value="Repaired">Repaired</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maintenanceNotes" class="form-label">Maintenance Notes</label>
+                            <textarea class="form-control" id="maintenanceNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveStatus">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View History Modal -->
+    <div class="modal fade" id="viewHistoryModal" tabindex="-1" aria-labelledby="viewHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="viewHistoryModalLabel">Machine History</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" id="historyList">
+                        <!-- History items will be dynamically inserted here -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Wait for the DOM to be fully loaded before running the script
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar Toggle Functionality
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+        });
+    }
+    
+    // Mobile Menu Toggle
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-active');
+        });
+    }
+    
+    // Set active menu item based on current page
+    const currentPageUrl = window.location.pathname;
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    
+    sidebarItems.forEach(item => {
+        // Remove active class from all items first
+        item.classList.remove('active');
+        
+        // Compare the href with the current page URL
+        const itemUrl = item.getAttribute('href');
+        
+        // Check if the current page matches this menu item
+        if (itemUrl === currentPageUrl || 
+            (currentPageUrl.endsWith('/index.html') && itemUrl === '#')) {
+            item.classList.add('active');
+        }
+    });
+});
+        // Static data for assigned machines
+        const machines = [
+            { 
+                name: "Forklift", 
+                serial: "FL12345", 
+                location: "Site A", 
+                status: "Operational", 
+                lastMaintenance: "2023-09-15",
+                history: ["2023-09-15: Operational", "2023-08-10: Repaired"]
+            },
+            { 
+                name: "Crane", 
+                serial: "CR67890", 
+                location: "Site B", 
+                status: "In Progress", 
+                lastMaintenance: "2023-08-20",
+                history: ["2023-08-20: In Progress", "2023-07-05: Needs Cleaning"]
+            },
+            { 
+                name: "Conveyor", 
+                serial: "CV54321", 
+                location: "Warehouse", 
+                status: "Needs Cleaning", 
+                lastMaintenance: "2023-07-10",
+                history: ["2023-07-10: Needs Cleaning", "2023-06-01: Repaired"]
+            },
+        ];
+
+        // Render machine data in the table
+        function renderMachines(data) {
+            const tableBody = document.querySelector("#machineTable tbody");
+            tableBody.innerHTML = "";
+            data.forEach((machine, index) => {
+                const row = `
+                    <tr>
+                        <td>${machine.name}</td>
+                        <td>${machine.serial}</td>
+                        <td>${machine.location}</td>
+                        <td><span class="badge ${getStatusBadgeClass(machine.status)}">${machine.status}</span></td>
+                        <td>${machine.lastMaintenance}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary btn-update" data-index="${index}">
+                                <i class="fas fa-edit"></i> Update Status
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary btn-history" data-index="${index}">
+                                <i class="fas fa-history"></i> View History
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML("beforeend", row);
+            });
+
+            // Add event listeners to update buttons
+            document.querySelectorAll(".btn-update").forEach(button => {
+                button.addEventListener("click", () => {
+                    const index = button.dataset.index;
+                    const modal = new bootstrap.Modal(document.getElementById("updateStatusModal"));
+                    modal.show();
+
+                    // Save changes on modal save button click
+                    document.getElementById("saveStatus").onclick = () => {
+                        const newStatus = document.getElementById("newStatus").value;
+                        const notes = document.getElementById("maintenanceNotes").value;
+                        if (newStatus) {
+                            machines[index].status = newStatus;
+                            modal.hide();
+                            renderMachines(machines);
+                        }
+                    };
+                });
+            });
+
+            // Add event listeners to view history buttons
+            document.querySelectorAll(".btn-history").forEach(button => {
+                button.addEventListener("click", () => {
+                    const index = button.dataset.index;
+                    const historyList = document.getElementById("historyList");
+                    historyList.innerHTML = "";
+                    machines[index].history.forEach(entry => {
+                        const listItem = `<li class="list-group-item">${entry}</li>`;
+                        historyList.insertAdjacentHTML("beforeend", listItem);
+                    });
+                    const modal = new bootstrap.Modal(document.getElementById("viewHistoryModal"));
+                    modal.show();
+                });
+            });
+        }
+
+        // Get badge class based on status
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case "Operational":
+                    return "badge-active";
+                case "In Progress":
+                    return "badge-warning";
+                case "Needs Cleaning":
+                case "Repaired":
+                    return "badge-inactive";
+                default:
+                    return "badge-secondary";
+            }
+        }
+
+        // Search functionality
+        document.getElementById("searchMachines").addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase();
+            const filteredMachines = machines.filter(machine =>
+                machine.name.toLowerCase().includes(query) || machine.status.toLowerCase().includes(query)
+            );
+            renderMachines(filteredMachines);
+        });
+
+        // Initial render
+        renderMachines(machines);
+    </script>
+</body>
+</html>
